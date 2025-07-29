@@ -19,7 +19,7 @@ After using the tracker, you’ll be able to:
 
 ## 📸 Screenshot Preview
 
-You can find a sample screenshot of the project directory here:
+You can find a sample screenshot of the project final output here:
 
 ![Screenshot Preview!](expense_tracker_files/assets/pythonoutput.png)
 
