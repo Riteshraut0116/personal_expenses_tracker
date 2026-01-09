@@ -6,6 +6,15 @@ from collections import defaultdict
 FILE_NAME = 'expenses.csv'
 HEADERS = ['Date', 'Category', 'Description', 'Amount']
 
+def parse_date(date_str):
+    """Parses a date string trying multiple formats."""
+    for fmt in ('%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%d-%m-%Y'):
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            pass
+    raise ValueError(f"Invalid date format: {date_str}")
+
 def initialize_csv():
     """Creates the CSV file with headers if it doesn't exist."""
     if not os.path.exists(FILE_NAME):
@@ -36,8 +45,8 @@ def add_expense():
         date = datetime.now().strftime('%Y-%m-%d')
     else:
         try:
-            datetime.strptime(date_str, '%Y-%m-%d')
-            date = date_str
+            date_obj = parse_date(date_str)
+            date = date_obj.strftime('%Y-%m-%d')
         except ValueError:
             print("Invalid date format. Using today's date.")
             date = datetime.now().strftime('%Y-%m-%d')
@@ -107,8 +116,8 @@ def edit_expense():
     new_date_str = input(f"Date ({expense[0]}): ")
     if new_date_str:
         try:
-            datetime.strptime(new_date_str, '%Y-%m-%d')
-            expense[0] = new_date_str
+            date_obj = parse_date(new_date_str)
+            expense[0] = date_obj.strftime('%Y-%m-%d')
         except ValueError:
             print("Invalid date format. Keeping original date.")
 
@@ -154,7 +163,7 @@ def filter_expenses():
     filtered_list = []
     for expense in expenses:
         try:
-            expense_date = datetime.strptime(expense[0], '%Y-%m-%d')
+            expense_date = parse_date(expense[0])
         except (ValueError, IndexError):
             continue  # Skip malformed rows
 
@@ -195,7 +204,7 @@ def view_summary():
 
     for date_str, _, _, amount_str in expenses:
         try:
-            date = datetime.strptime(date_str, '%Y-%m-%d')
+            date = parse_date(date_str)
             amount = float(amount_str)
             summary[date.year][date.strftime('%B')] += amount
             grand_total += amount
